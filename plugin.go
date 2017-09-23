@@ -5,6 +5,7 @@ import (
 	"encoding/xml"
 	"fmt"
 	"github.com/JonasFranzDEV/drone-crowdin/responses"
+	"github.com/JonasFranzDEV/drone-crowdin/utils"
 	"golang.org/x/net/html/charset"
 	"io"
 	"mime/multipart"
@@ -24,15 +25,30 @@ type (
 
 	// Plugin represents the drone-crowdin plugin including config and file-mapping.
 	Plugin struct {
-		Config Config
-		Files  Files
-		Branch string
+		Config          Config
+		Files           Files
+		Branch          string
+		Languages       []string
+		ExportDirectory string
+		DoDownload      bool
 	}
 )
 
-// ToURL returns the API-endpoint including identifier and API-KEY
-func (c Config) ToURL() string {
-	return fmt.Sprintf("https://api.crowdin.com/api/project/%s/update-file?key=%s", c.Identifier, c.Key)
+func (c Config) ToProjectURL() string {
+	return fmt.Sprintf("https://api/crowdin.com/api/project/%s", c.Identifier)
+}
+
+// ToUploadURL returns the API-endpoint including identifier and API-KEY
+func (c Config) ToUploadURL() string {
+	return fmt.Sprintf("%s/update-file?key=%s", c.ToProjectURL(), c.Key)
+}
+
+func (p Plugin) ToLanguageDownloadURL(language string) string {
+	if p.Branch != "" {
+		return fmt.Sprintf("%s/%s.zip?key=%s&branch=%s", p.Config.ToProjectURL(), language, p.Config.Key, p.Branch)
+	}
+	return fmt.Sprintf("%s/%s.zip?key=%s", p.Config.ToProjectURL(), language, p.Config.Key)
+
 }
 
 // Exec starts the plugin and updates the crowdin translation by uploading files from the files map
@@ -68,7 +84,7 @@ func (p Plugin) Exec() error {
 	}
 	var req *http.Request
 	var err error
-	if req, err = http.NewRequest("POST", p.Config.ToURL(), body); err != nil {
+	if req, err = http.NewRequest("POST", p.Config.ToUploadURL(), body); err != nil {
 		return err
 	}
 	req.Header.Set("Content-Type", writer.FormDataContentType())
@@ -87,22 +103,79 @@ func (p Plugin) Exec() error {
 		return err
 	}
 	if resp.StatusCode != 200 {
-		var errResponse = new(responses.Error)
-		decoder := xml.NewDecoder(body)
-		decoder.CharsetReader = charset.NewReaderLabel
-		if err := decoder.Decode(&errResponse); err != nil {
+		if e, err := responses.ParseAsError(body); err != nil {
 			return err
+		} else {
+			return e
 		}
-		return errResponse
 	}
 	var success = new(responses.Success)
-	decoder := xml.NewDecoder(body)
-	decoder.CharsetReader = charset.NewReaderLabel
-	if err := decoder.Decode(&success); err != nil {
+	if success, err = responses.ParseAsSuccess(body); err != nil {
 		return err
 	}
 	for _, file := range success.Stats {
 		fmt.Printf("%s: %s\n", file.Name, file.Status)
 	}
+
+	if p.DoDownload {
+		for _, language := range p.Languages {
+			if err := p.downloadLanguage(client, language); err != nil {
+				return err
+			}
+			fmt.Printf("Downloaded package: %s\n", language)
+		}
+	}
 	return nil
+}
+
+func (p Plugin) downloadLanguage(client *http.Client, language string) error {
+	// Step 1: Export translations (aka generate server side)
+	exportURL := fmt.Sprintf("%s/export?key=%s", p.Config.ToProjectURL(), p.Config.Key)
+	if p.Branch != "" {
+		exportURL = fmt.Sprintf("%s&branch=%s", exportURL, p.Branch)
+	}
+	if resp, err := client.Get(exportURL); err != nil {
+		return err
+	} else if resp.StatusCode != 200 {
+		defer resp.Body.Close()
+		if e, err := responses.ParseAsError(resp.Body); err != nil {
+			return err
+		} else {
+			return e
+		}
+	} else {
+		defer resp.Body.Close()
+	}
+
+	file, err := downloadFromUrl(p.ToLanguageDownloadURL(language))
+	if err != nil {
+		return err
+	}
+	err = utils.Unzip(file.Name(), p.ExportDirectory)
+	if err != nil {
+		return err
+	}
+	err = os.Remove(file.Name())
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func downloadFromUrl(url string) (*os.File, error) {
+	output, err := os.Create("lang.zip")
+	if err != nil {
+		return nil, err
+	}
+	defer output.Close()
+
+	response, err := http.Get(url)
+	if err != nil {
+		os.Remove(output.Name())
+		return nil, err
+	}
+	defer response.Body.Close()
+
+	_, err = io.Copy(output, response.Body)
+	return output, err
 }

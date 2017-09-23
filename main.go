@@ -44,6 +44,22 @@ func main() {
 			Usage:  "if true it will not pass the branch to crowdin",
 			EnvVar: "PLUGIN_IGNORE_BRANCH",
 		},
+		cli.StringFlag{
+			Name:   "export-dir",
+			Usage:  "the directory where the translated files should be extracted in",
+			EnvVar: "PLUGIN_EXPORT_DIR",
+		},
+		cli.BoolFlag{
+			Name:   "download",
+			Usage:  "downloads translated files if true",
+			EnvVar: "PLUGIN_DOWNLOAD",
+		},
+		cli.StringSliceFlag{
+			Name:   "languages",
+			Usage:  "the languages that should be exported",
+			EnvVar: "PLUGIN_LANGUAGES",
+			Value:  &cli.StringSlice{"all"},
+		},
 	}
 	if err := app.Run(os.Args); err != nil {
 		log.Fatal(err)

@@ -8,6 +8,9 @@ You must provide in your configuration:
   * key: the Crowdin file name
   * value: the real path the to file
 * `ignore_branch` It will send the Drone branch to Crowdin if it is `false`. (Default: `false`)
+* `download` Downloads translated files from Crowdin if it is `true`. (Default: `false`)
+* `export_dir` Export directory of the translated strings
+* `languages` Languages which should be downloaded/exported from Crowdin. (Default: `all`)
 
 Information about API keys: https://support.crowdin.com/api/api-integration-setup/
 ## Example
@@ -23,4 +26,10 @@ pipeline:
     files:
       example: options/example.ini
       example2: options/example2.ini
+    ignore_branch: true
+    download: true
+    export_dir: langs/
+    languages:
+    - de
+    - fr
 ```
