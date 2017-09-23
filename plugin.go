@@ -26,6 +26,7 @@ type (
 	Plugin struct {
 		Config Config
 		Files  Files
+		Branch string
 	}
 )
 
@@ -57,9 +58,13 @@ func (p Plugin) Exec() error {
 		if _, err = io.Copy(part, file); err != nil {
 			return err
 		}
-		if err = writer.Close(); err != nil {
-			return err
-		}
+	}
+	// Adding branch if it is not ignored
+	if p.Branch != "" {
+		writer.WriteField("branch", p.Branch)
+	}
+	if err := writer.Close(); err != nil {
+		return err
 	}
 	var req *http.Request
 	var err error
