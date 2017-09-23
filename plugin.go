@@ -31,7 +31,6 @@ func (c Config) ToURL() string {
 }
 
 func (p Plugin) Exec() error {
-	p.Files = map[string]string{"locale_en-US.ini": "DOCS.md"}
 	if len(p.Files) > 20 {
 		return fmt.Errorf("20 files max are allowed to upload. %d files given", len(p.Files))
 	}
