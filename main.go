@@ -73,6 +73,9 @@ func run(c *cli.Context) error {
 			Identifier: c.String("project-identifier"),
 			Key:        c.String("project-key"),
 		},
+		DoDownload:      c.Bool("download"),
+		Languages:       c.StringSlice("languages"),
+		ExportDirectory: c.String("export-dir"),
 	}
 	if !c.Bool("ignore-branch") {
 		plugin.Branch = c.String("commit.branch")

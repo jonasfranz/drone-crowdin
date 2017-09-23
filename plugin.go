@@ -43,82 +43,60 @@ func (c Config) ToUploadURL() string {
 
 func (p Plugin) ToLanguageDownloadURL(language string) string {
 	if p.Branch != "" {
-		return fmt.Sprintf("%s/%s.zip?key=%s&branch=%s", p.Config.ToProjectURL(), language, p.Config.Key, p.Branch)
+		return fmt.Sprintf("%s/download/%s.zip?key=%s&branch=%s", p.Config.ToProjectURL(), language, p.Config.Key, p.Branch)
 	}
-	return fmt.Sprintf("%s/%s.zip?key=%s", p.Config.ToProjectURL(), language, p.Config.Key)
+	return fmt.Sprintf("%s/download/%s.zip?key=%s", p.Config.ToProjectURL(), language, p.Config.Key)
 
 }
 
 // Exec starts the plugin and updates the crowdin translation by uploading files from the files map
 func (p Plugin) Exec() error {
+	client := &http.Client{}
+
+	//SECTION: Upload
 	if len(p.Files) > 20 {
 		return fmt.Errorf("20 files max are allowed to upload. %d files given", len(p.Files))
-	}
-
-	body := &bytes.Buffer{}
-	writer := multipart.NewWriter(body)
-	for crowdinPath, path := range p.Files {
-		var err error
-		var file *os.File
-		if file, err = os.Open(path); err != nil {
-			return err
+	} else if len(p.Files) > 0 {
+		req, err := p.buildUploadRequest()
+		if err != nil {
+			return fmt.Errorf("error while building upload request: %v", err)
 		}
-		defer file.Close()
-
-		part, err := writer.CreateFormFile(fmt.Sprintf("files[%s]", crowdinPath), crowdinPath)
+		resp, err := client.Do(req)
 		if err != nil {
 			return err
 		}
-		if _, err = io.Copy(part, file); err != nil {
+
+		body := &bytes.Buffer{}
+		if _, err := body.ReadFrom(resp.Body); err != nil {
 			return err
 		}
-	}
-	// Adding branch if it is not ignored
-	if p.Branch != "" {
-		writer.WriteField("branch", p.Branch)
-	}
-	if err := writer.Close(); err != nil {
-		return err
-	}
-	var req *http.Request
-	var err error
-	if req, err = http.NewRequest("POST", p.Config.ToUploadURL(), body); err != nil {
-		return err
-	}
-	req.Header.Set("Content-Type", writer.FormDataContentType())
-
-	client := &http.Client{}
-	resp, err := client.Do(req)
-	if err != nil {
-		return err
-	}
-
-	body = &bytes.Buffer{}
-	if _, err := body.ReadFrom(resp.Body); err != nil {
-		return err
-	}
-	if err := resp.Body.Close(); err != nil {
-		return err
-	}
-	if resp.StatusCode != 200 {
-		if e, err := responses.ParseAsError(body); err != nil {
+		if err := resp.Body.Close(); err != nil {
 			return err
-		} else {
-			return e
+		}
+		if resp.StatusCode != 200 {
+			if e, err := responses.ParseAsError(body); err != nil {
+				return err
+			} else {
+				return fmt.Errorf("error while uploading: %v", e)
+			}
+		}
+		var success = new(responses.Success)
+		if success, err = responses.ParseAsSuccess(body); err != nil {
+			return err
+		}
+		for _, file := range success.Stats {
+			fmt.Printf("%s: %s\n", file.Name, file.Status)
 		}
 	}
-	var success = new(responses.Success)
-	if success, err = responses.ParseAsSuccess(body); err != nil {
-		return err
-	}
-	for _, file := range success.Stats {
-		fmt.Printf("%s: %s\n", file.Name, file.Status)
-	}
 
+	//SECTION: Download
 	if p.DoDownload {
+		if err := p.buildTranslations(client); err != nil {
+			return fmt.Errorf("error while building languages: %v", err)
+		}
 		for _, language := range p.Languages {
 			if err := p.downloadLanguage(client, language); err != nil {
-				return err
+				return fmt.Errorf("error while downloading %s: %v", language, err)
 			}
 			fmt.Printf("Downloaded package: %s\n", language)
 		}
@@ -126,12 +104,48 @@ func (p Plugin) Exec() error {
 	return nil
 }
 
-func (p Plugin) downloadLanguage(client *http.Client, language string) error {
+func (p Plugin) buildUploadRequest() (*http.Request, error) {
+	body := &bytes.Buffer{}
+	writer := multipart.NewWriter(body)
+	for crowdinPath, path := range p.Files {
+		var err error
+		var file *os.File
+		if file, err = os.Open(path); err != nil {
+			return nil, err
+		}
+		defer file.Close()
+
+		part, err := writer.CreateFormFile(fmt.Sprintf("files[%s]", crowdinPath), crowdinPath)
+		if err != nil {
+			return nil, err
+		}
+		if _, err = io.Copy(part, file); err != nil {
+			return nil, err
+		}
+	}
+	// Adding branch if it is not ignored
+	if p.Branch != "" {
+		writer.WriteField("branch", p.Branch)
+	}
+	if err := writer.Close(); err != nil {
+		return nil, err
+	}
+	var req *http.Request
+	var err error
+	if req, err = http.NewRequest("POST", p.Config.ToUploadURL(), body); err != nil {
+		return nil, err
+	}
+	req.Header.Set("Content-Type", writer.FormDataContentType())
+	return req, nil
+}
+
+func (p Plugin) buildTranslations(client *http.Client) error {
 	// Step 1: Export translations (aka generate server side)
 	exportURL := fmt.Sprintf("%s/export?key=%s", p.Config.ToProjectURL(), p.Config.Key)
 	if p.Branch != "" {
 		exportURL = fmt.Sprintf("%s&branch=%s", exportURL, p.Branch)
 	}
+	fmt.Println(exportURL)
 	if resp, err := client.Get(exportURL); err != nil {
 		return err
 	} else if resp.StatusCode != 200 {
@@ -144,7 +158,11 @@ func (p Plugin) downloadLanguage(client *http.Client, language string) error {
 	} else {
 		defer resp.Body.Close()
 	}
+	return nil
+}
 
+func (p Plugin) downloadLanguage(client *http.Client, language string) error {
+	fmt.Println(p.ToLanguageDownloadURL(language))
 	file, err := downloadFromUrl(p.ToLanguageDownloadURL(language))
 	if err != nil {
 		return err
