@@ -33,7 +33,7 @@ type (
 )
 
 func (c Config) ToProjectURL() string {
-	return fmt.Sprintf("https://api/crowdin.com/api/project/%s", c.Identifier)
+	return fmt.Sprintf("https://api.crowdin.com/api/project/%s", c.Identifier)
 }
 
 // ToUploadURL returns the API-endpoint including identifier and API-KEY
