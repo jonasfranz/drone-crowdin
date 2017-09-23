@@ -2,11 +2,9 @@ package main
 
 import (
 	"bytes"
-	"encoding/xml"
 	"fmt"
 	"github.com/JonasFranzDEV/drone-crowdin/responses"
 	"github.com/JonasFranzDEV/drone-crowdin/utils"
-	"golang.org/x/net/html/charset"
 	"io"
 	"mime/multipart"
 	"net/http"
