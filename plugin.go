@@ -89,16 +89,15 @@ func (p Plugin) Exec() error {
 			return err
 		}
 		return errResponse
-	} else {
-		var success = new(responses.Success)
-		decoder := xml.NewDecoder(body)
-		decoder.CharsetReader = charset.NewReaderLabel
-		if err := decoder.Decode(&success); err != nil {
-			return err
-		}
-		for _, file := range success.Stats {
-			fmt.Printf("%s: %s\n", file.Name, file.Status)
-		}
+	}
+	var success = new(responses.Success)
+	decoder := xml.NewDecoder(body)
+	decoder.CharsetReader = charset.NewReaderLabel
+	if err := decoder.Decode(&success); err != nil {
+		return err
+	}
+	for _, file := range success.Stats {
+		fmt.Printf("%s: %s\n", file.Name, file.Status)
 	}
 	return nil
 }
