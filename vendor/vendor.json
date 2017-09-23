@@ -7,6 +7,12 @@
 			"path": "github.com/urfave/cli",
 			"revision": "7fb9c86b14e6a702a4157ccb5a863f07d844a207",
 			"revisionTime": "2017-09-11T04:08:19Z"
+		},
+		{
+			"checksumSHA1": "barUU39reQ7LdgYLA323hQ/UGy4=",
+			"path": "golang.org/x/net/html/charset",
+			"revision": "0744d001aa8470aaa53df28d32e5ceeb8af9bd70",
+			"revisionTime": "2017-09-01T09:04:45Z"
 		}
 	],
 	"rootPath": "github.com/JonasFranzDEV/drone-crowdin"
