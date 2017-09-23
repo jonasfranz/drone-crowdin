@@ -8,7 +8,7 @@ pipeline:
     pull: true
     commands:
       - go vet
-      - go test -cover -coverprofile=coverage.out
+      - go test -cover $(go list ./... | grep -v /vendor/)
 
   build_linux_amd64:
     image: golang:1.9
