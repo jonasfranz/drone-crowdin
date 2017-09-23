@@ -147,7 +147,6 @@ func (p Plugin) buildTranslations(client *http.Client) error {
 	if p.Branch != "" {
 		exportURL = fmt.Sprintf("%s&branch=%s", exportURL, p.Branch)
 	}
-	fmt.Println(exportURL)
 	if resp, err := client.Get(exportURL); err != nil {
 		return err
 	} else if resp.StatusCode != 200 {
@@ -164,7 +163,6 @@ func (p Plugin) buildTranslations(client *http.Client) error {
 }
 
 func (p Plugin) downloadLanguage(client *http.Client, language string) error {
-	fmt.Println(p.ToLanguageDownloadURL(language))
 	file, err := downloadFromUrl(p.ToLanguageDownloadURL(language))
 	if err != nil {
 		return err
