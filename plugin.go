@@ -32,6 +32,7 @@ type (
 	}
 )
 
+// ToProjectURL returns the base URL of the api endpoint
 func (c Config) ToProjectURL() string {
 	return fmt.Sprintf("https://api.crowdin.com/api/project/%s", c.Identifier)
 }
@@ -41,6 +42,7 @@ func (c Config) ToUploadURL() string {
 	return fmt.Sprintf("%s/update-file?key=%s", c.ToProjectURL(), c.Key)
 }
 
+// ToLanguageDownloadURL returns the download endpoint for the given language
 func (p Plugin) ToLanguageDownloadURL(language string) string {
 	if p.Branch != "" {
 		return fmt.Sprintf("%s/download/%s.zip?key=%s&branch=%s", p.Config.ToProjectURL(), language, p.Config.Key, p.Branch)
