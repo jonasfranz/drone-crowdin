@@ -31,6 +31,7 @@ func (c Config) ToURL() string {
 }
 
 func (p Plugin) Exec() error {
+	p.Files = map[string]string{"locale_en-US.ini": "DOCS.md"}
 	if len(p.Files) > 20 {
 		return fmt.Errorf("20 files max are allowed to upload. %d files given", len(p.Files))
 	}
@@ -84,6 +85,16 @@ func (p Plugin) Exec() error {
 			return err
 		}
 		return err_response
+	} else {
+		var success = new(responses.Success)
+		decoder := xml.NewDecoder(body)
+		decoder.CharsetReader = charset.NewReaderLabel
+		if err := decoder.Decode(&success); err != nil {
+			return err
+		}
+		for _, file := range success.Stats {
+			fmt.Printf("%s: %s\n", file.Name, file.Status)
+		}
 	}
 	return nil
 }
