@@ -4,7 +4,9 @@ You must provide in your configuration:
 
 * `project_identifier` - Identifier of your Crowdin project (also available as secret  `CROWDIN_IDENTIFIER`)
 * `project_key` - API Key of your Crowdin project (also available as secret  `CROWDIN_KEY`)
-* `files` - Map of files with the crowdin file name as key and the to-upload file-path as value.
+* `files` - Map of files to upload to Crowdin
+  * key: the Crowdin file name
+  * value: the real path the to file
 
 Information about API keys: https://support.crowdin.com/api/api-integration-setup/
 ## Example
