@@ -12,6 +12,7 @@ You must provide in your configuration:
 * `export_dir` Export directory of the translated strings
 * `languages` Languages which should be downloaded/exported from Crowdin. (Default: `all`)
 
+
 Information about API keys: https://support.crowdin.com/api/api-integration-setup/
 ## Example
 
