@@ -33,6 +33,17 @@ func main() {
 			EnvVar: "PLUGIN_FILES",
 			Value:  &StringMapFlag{},
 		},
+		cli.StringFlag{
+			Name:   "commit.branch",
+			Value:  "master",
+			Usage:  "git commit branch",
+			EnvVar: "DRONE_COMMIT_BRANCH",
+		},
+		cli.BoolFlag{
+			Name:   "ignore-branch",
+			Usage:  "if true it will not pass the branch to crowdin",
+			EnvVar: "PLUGIN_IGNORE_BRANCH",
+		},
 	}
 	if err := app.Run(os.Args); err != nil {
 		log.Fatal(err)
@@ -46,6 +57,9 @@ func run(c *cli.Context) error {
 			Identifier: c.String("project-identifier"),
 			Key:        c.String("project-key"),
 		},
+	}
+	if !c.Bool("ignore-branch") {
+		plugin.Branch = c.String("commit.branch")
 	}
 	return plugin.Exec()
 }
