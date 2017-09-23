@@ -8,7 +8,7 @@ import (
 )
 
 var build = "0" //build number is set on compile time
-var version = "0.1.0"
+var version = "1.0.0"
 
 func main() {
 	app := cli.NewApp()
