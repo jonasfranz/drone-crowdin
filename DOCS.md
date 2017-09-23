@@ -7,6 +7,7 @@ You must provide in your configuration:
 * `files` - Map of files to upload to Crowdin
   * key: the Crowdin file name
   * value: the real path the to file
+* `ignore_branch` It will send the Drone branch to Crowdin if it is `false`. (Default: `false`)
 
 Information about API keys: https://support.crowdin.com/api/api-integration-setup/
 ## Example
