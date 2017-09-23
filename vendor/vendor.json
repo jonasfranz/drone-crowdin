@@ -1,0 +1,13 @@
+{
+	"comment": "",
+	"ignore": "test",
+	"package": [
+		{
+			"checksumSHA1": "7Qm/EUxEnhQgbMPWUsKrVswLUsc=",
+			"path": "github.com/urfave/cli",
+			"revision": "7fb9c86b14e6a702a4157ccb5a863f07d844a207",
+			"revisionTime": "2017-09-11T04:08:19Z"
+		}
+	],
+	"rootPath": "github.com/JonasFranzDEV/drone-crowdin"
+}
