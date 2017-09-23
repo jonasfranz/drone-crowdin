@@ -14,8 +14,9 @@ Information about API keys: https://support.crowdin.com/api/api-integration-setu
 The following is a sample configuration in your .drone.yml file:
 
 ```yaml
-translations:
+pipeline:
   crowdin:
+    image: jonasfranz/crowdin
     project_identifier: example
     project_key: 1bc29b36f623ba82aaf6724fd3b16718
     files:
