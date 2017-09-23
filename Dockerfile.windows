@@ -1,4 +1,4 @@
-FROM plugins/base:multiarch
+FROM plugins/base:amd64
 MAINTAINER Jonas Franz <info@jonasfranz.de>
 
 LABEL org.label-schema.version=latest
