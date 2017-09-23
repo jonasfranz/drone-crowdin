@@ -20,12 +20,12 @@ func main() {
 		cli.StringFlag{
 			Name:   "project-key",
 			Usage:  "project key",
-			EnvVar: "PLUGIN_PROJECT_KEY",
+			EnvVar: "PLUGIN_PROJECT_KEY,CROWDIN_KEY",
 		},
 		cli.StringFlag{
 			Name:   "project-identifier",
 			Usage:  "project identifier",
-			EnvVar: "PLUGIN_PROJECT_IDENTIFIER",
+			EnvVar: "PLUGIN_PROJECT_IDENTIFIER,CROWDIN_IDENTIFIER",
 		},
 		cli.GenericFlag{
 			Name:   "files",
