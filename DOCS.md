@@ -2,8 +2,8 @@ Use the Crowdin plugin to update translation files.
 
 You must provide in your configuration:
 
-* `project_identifier` - Identifier of your Crowdin project
-* `project_key` - API Key of your Crowdin project
+* `project_identifier` - Identifier of your Crowdin project (also available as secret  `CROWDIN_IDENTIFIER`)
+* `project_key` - API Key of your Crowdin project (also available as secret  `CROWDIN_KEY`)
 * `files` - Map of files with the crowdin file name as key and the to-upload file-path as value.
 
 Information about API keys: https://support.crowdin.com/api/api-integration-setup/
