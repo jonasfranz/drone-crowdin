@@ -34,3 +34,34 @@ pipeline:
     - de
     - fr
 ```
+
+## Commit changes
+
+Please have a look at the [drone-git-push plugin](https://github.com/appleboy/drone-git-push) if you want to update the translations in your git repository too-
+
+Example:
+```yaml
+pipeline:
+  crowdin:
+    image: jonasfranz/crowdin
+    project_identifier: example
+    project_key: 1bc29b36f623ba82aaf6724fd3b16718
+    files:
+      example: options/example.ini
+      example2: options/example2.ini
+    ignore_branch: true
+    download: true
+    export_dir: langs/
+    languages:
+    - de
+    - fr
+  git_push:
+    image: appleboy/drone-git-push
+    branch: master
+    remote: git@your-remote.tdl/your-repo/repo
+    force: false
+    commit: true
+    commit_message: [skip ci] Updated translations
+```
+
+**Important**: Please use `[skip ci]` inside your commit message to prevent recursive ci builds.
