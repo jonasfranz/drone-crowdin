@@ -61,7 +61,7 @@ pipeline:
     remote: git@your-remote.tdl/your-repo/repo
     force: false
     commit: true
-    commit_message: [skip ci] Updated translations
+    commit_message: "[skip ci] Updated translations"
 ```
 
 **Important**: Please use `[skip ci]` inside your commit message to prevent recursive ci builds.
