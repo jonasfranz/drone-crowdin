@@ -11,7 +11,7 @@ steps:
   pull: always
   image: golang:1.13
   commands:
-  - go vet ./...
+  - go vet -mod=vendor ./...
   environment:
     GO111MODULE: on
 
@@ -19,7 +19,7 @@ steps:
   pull: always
   image: golang:1.13
   commands:
-  - go test -cover $(go list ./... | grep -v /vendor/)
+  - go test -mod=vendor -cover $(go list -mod=vendor ./... | grep -v /vendor/)
   environment:
     GO111MODULE: on
 
