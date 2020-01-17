@@ -3,8 +3,8 @@ package main
 import (
 	"bytes"
 	"fmt"
-	"github.com/JonasFranzDEV/drone-crowdin/responses"
-	"github.com/JonasFranzDEV/drone-crowdin/utils"
+	"github.com/jonasfranz/drone-crowdin/responses"
+	"github.com/jonasfranz/drone-crowdin/utils"
 	"io"
 	"mime/multipart"
 	"net/http"

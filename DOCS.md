@@ -1,5 +1,7 @@
 Use the Crowdin plugin to update translation files.
 
+**Caveat**: Please note currently the instructions below are for Drone 0.8
+
 You must provide in your configuration:
 
 * `project_identifier` - Identifier of your Crowdin project (also available as secret  `CROWDIN_IDENTIFIER`)

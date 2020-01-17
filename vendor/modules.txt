@@ -1,0 +1,28 @@
+# github.com/davecgh/go-spew v1.1.1-0.20170829195320-a47672248388
+github.com/davecgh/go-spew/spew
+# github.com/pmezard/go-difflib v1.0.0
+github.com/pmezard/go-difflib/difflib
+# github.com/stretchr/testify v1.1.5-0.20170809224252-890a5c3458b4
+github.com/stretchr/testify/assert
+# github.com/urfave/cli v1.20.1-0.20170911040819-7fb9c86b14e6
+github.com/urfave/cli
+# golang.org/x/net v0.0.0-20170922011244-0744d001aa84
+golang.org/x/net/html
+golang.org/x/net/html/atom
+golang.org/x/net/html/charset
+# golang.org/x/text v0.1.1-0.20170915090833-1cbadb444a80
+golang.org/x/text/encoding
+golang.org/x/text/encoding/charmap
+golang.org/x/text/encoding/htmlindex
+golang.org/x/text/encoding/internal
+golang.org/x/text/encoding/internal/identifier
+golang.org/x/text/encoding/japanese
+golang.org/x/text/encoding/korean
+golang.org/x/text/encoding/simplifiedchinese
+golang.org/x/text/encoding/traditionalchinese
+golang.org/x/text/encoding/unicode
+golang.org/x/text/internal/tag
+golang.org/x/text/internal/utf8internal
+golang.org/x/text/language
+golang.org/x/text/runes
+golang.org/x/text/transform
