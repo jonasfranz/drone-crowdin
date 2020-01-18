@@ -73,7 +73,7 @@ steps:
   settings:
     dockerfile: docker/Dockerfile.linux.amd64
     dry_run: true
-    repo: jonasfranz/drone-crowdin
+    repo: jonasfranz/crowdin
     tags: linux-amd64
   when:
     event:
@@ -88,7 +88,7 @@ steps:
     dockerfile: docker/Dockerfile.linux.amd64
     password:
       from_secret: docker_password
-    repo: jonasfranz/drone-crowdin
+    repo: jonasfranz/crowdin
     username:
       from_secret: docker_username
   when:
@@ -149,7 +149,7 @@ steps:
   settings:
     dockerfile: docker/Dockerfile.linux.arm64
     dry_run: true
-    repo: jonasfranz/drone-crowdin
+    repo: jonasfranz/crowdin
     tags: linux-arm64
   when:
     event:
@@ -164,7 +164,7 @@ steps:
     dockerfile: docker/Dockerfile.linux.arm64
     password:
       from_secret: docker_password
-    repo: jonasfranz/drone-crowdin
+    repo: jonasfranz/crowdin
     username:
       from_secret: docker_username
   when:
@@ -225,7 +225,7 @@ steps:
   settings:
     dockerfile: docker/Dockerfile.linux.arm
     dry_run: true
-    repo: jonasfranz/drone-crowdin
+    repo: jonasfranz/crowdin
     tags: linux-arm
   when:
     event:
@@ -240,7 +240,7 @@ steps:
     dockerfile: docker/Dockerfile.linux.arm
     password:
       from_secret: docker_password
-    repo: jonasfranz/drone-crowdin
+    repo: jonasfranz/crowdin
     username:
       from_secret: docker_username
   when:
